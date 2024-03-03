@@ -42,10 +42,10 @@ class Cart(models.Model):
         return str(self.id)
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    quantiy = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self) -> str:
         return f'{self.cart.id} {self.product.name}'

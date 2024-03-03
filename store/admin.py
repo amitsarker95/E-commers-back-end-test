@@ -3,11 +3,9 @@ from django.db.models.query import QuerySet
 from .models import Product, ProductCategory, ProductInventory, Cart, CartItem
 
 
-# admin.site.register(Product)
 admin.site.register(ProductCategory)
 admin.site.register(ProductInventory)
-admin.site.register(Cart)
-admin.site.register(CartItem)
+
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -51,3 +49,21 @@ class ProductAdmin(admin.ModelAdmin):
             f"{updated_count} product's were successfully updated.",
             messages.SUCCESS
         )
+
+
+    @admin.register(Cart)
+    class CartAdmin(admin.ModelAdmin):
+        list_display = ['id', 'created']
+        search_fields = ['id']
+
+
+    @admin.register(CartItem)
+    class CartItemAdmin(admin.ModelAdmin):
+
+        search_fields = ['id']
+        list_display = ['id', 'cart', 'product', 'total_price']
+        def total_price(self, cart_item:CartItem):
+            return cart_item.quantity * cart_item.product.price
+        total_price.short_description = 'Total Price'
+
+

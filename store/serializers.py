@@ -35,10 +35,28 @@ class ProductCartSerializer(serializers.ModelSerializer):
         return instence
 
 
+
+
+#Cart Items Product Serializers
+        
+
+class CartItemsProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name']
+
+
 class ProductCartItemSerializer(serializers.ModelSerializer):
+    product = CartItemsProductSerializer()
+    total_prices = serializers.SerializerMethodField()
+
+    def get_total_price(self, cart_item:CartItem):
+        return cart_item.quantity * cart_item.product.price
+    
     class Meta:
         model = CartItem
-        fields = ['id', 'cart', 'product']
+        fields = ['id', 'cart', 'product', 'total_price']
+
 
 
 
