@@ -17,10 +17,19 @@ class ProductInventorySerializer(serializers.ModelSerializer):
         fields = ['id' ,'quantity', 'created_at', 'modified_at']
 
 class ProductSerializer(serializers.ModelSerializer):
+    inventory_size = serializers.SerializerMethodField()
+    category_name = serializers.SerializerMethodField()
+
+    def get_inventory_size(self, product: Product):
+            return product.inventory.quantity
+    
+    def get_category_name(self, product: Product):
+        return f'{product.category.name}'
     class Meta:
         model = Product
-        fields = ['id' ,'name', 'description', 'price', 'category', 'inventory']
+        fields = ['id' ,'name', 'description', 'price', 'category', 'inventory','inventory_size', 'category_name']
 
+        
 
 
 class ProductCartSerializer(serializers.ModelSerializer):
@@ -57,6 +66,33 @@ class ProductCartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['id', 'cart', 'product', 'total_price']
+
+
+class AddCartItemSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField()
+    cart_id = serializers.UUIDField()
+    
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product_id', 'cart_id', 'quantity']
+
+    def save(self, **kwargs):
+        cart_id = self.validated_data['cart_id']
+        product_id = self.validated_data['product_id']
+        quantity = self.validated_data['quantity']
+        
+        try:
+            item = CartItem.objects.get(cart_id=cart_id, product_id=product_id)
+            item.quantity += quantity
+            item.save()
+            self.validated_data['quantity'] = item.quantity
+        except CartItem.DoesNotExist:
+            item = CartItem.objects.create(cart_id=cart_id, product_id=product_id, quantity=quantity)
+        return item
+
+
+        
+        
 
 
 

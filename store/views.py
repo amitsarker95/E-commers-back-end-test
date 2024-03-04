@@ -4,7 +4,7 @@ from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyM
 from rest_framework import status
 from .models import Product, ProductCategory, ProductInventory, Cart, CartItem
 from .serializers import ProductSerializer, ProductCategorySerializer, ProductInventorySerializer, \
-                           ProductCartSerializer , ProductCartItemSerializer
+                           ProductCartSerializer , ProductCartItemSerializer, AddCartItemSerializer 
 
 
 class ProductCategoryViewSet(ModelViewSet):
@@ -27,12 +27,16 @@ class ProductCartViewSet(CreateModelMixin,
     
     queryset = Cart.objects.prefetch_related('items__product').all()
     serializer_class = ProductCartSerializer
+    
 
-class ProductCartItemViewSet(ModelViewSet):
+class ProductAddCartItemViewSet(ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     
     queryset = CartItem.objects.all()
-    serializer_class = ProductCartItemSerializer
+    serializer_class = AddCartItemSerializer
+
+
+
     
 
 
