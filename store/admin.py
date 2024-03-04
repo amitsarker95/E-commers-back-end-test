@@ -32,7 +32,7 @@ class InventoryFilter(admin.SimpleListFilter):
 
 class ProductAdmin(admin.ModelAdmin):
     search_fields = ['name__istartswith']
-    list_display = ['name', 'price', 'category', 'inventory_status', 'product_count']
+    list_display = ['name', 'price', 'category_name', 'inventory_status', 'product_count']
     list_filter = ['category', 'modified_at', InventoryFilter]
 
     @admin.display(ordering='inventory')
@@ -41,10 +41,16 @@ class ProductAdmin(admin.ModelAdmin):
             return 'Low'
         else:
             return 'Full'
+        
     @admin.display(ordering='quantity')
     def product_count(self, product):
         total = product.inventory.quantity
         return f'{total}'
+    
+    @admin.display(ordering='category')
+    def category_name(self, product):
+        category_name = product.category.name
+        return f'{category_name}'
 
     @admin.action(description='Clear inventory')
     def clear_inventory(self, request, queryset):
