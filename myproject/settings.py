@@ -19,8 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #Internal apps
+    'core',
     'store',
-
     #External development frameworks
     'rest_framework',
     'debug_toolbar',
@@ -103,6 +103,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
+AUTH_USER_MODEL = 'core.Customer'
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Extra List fields
@@ -120,6 +123,8 @@ SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
 }
+
+
 
 
 DEBUG_TOOLBAR_CONFIG = {

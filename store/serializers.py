@@ -1,6 +1,6 @@
 import uuid
 from rest_framework import serializers
-from .models import Product, ProductCategory, ProductInventory, Cart, CartItem
+from .models import Product, ProductCategory, ProductInventory, Cart, CartItem, Order, OrderItem
 
 
 
@@ -15,6 +15,8 @@ class ProductInventorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductInventory
         fields = ['id' ,'quantity', 'created_at', 'modified_at']
+        read_only_fields = ['created_at','modified_at' ]
+        
 
 class ProductSerializer(serializers.ModelSerializer):
     inventory_size = serializers.SerializerMethodField()
@@ -89,6 +91,28 @@ class AddCartItemSerializer(serializers.ModelSerializer):
         except CartItem.DoesNotExist:
             item = CartItem.objects.create(cart_id=cart_id, product_id=product_id, quantity=quantity)
         return item
+    
+
+#Order Serializers
+    
+class SimpleProductSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'description']
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+     product = SimpleProductSerializers()
+     class Meta:
+        model = OrderItem
+        fields = ['id','product', 'quantity', 'unit_price', ]
+        
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True)
+    class Meta:
+        model = Order
+        fields = ['id','placed_at', 'payment_status_summary']
 
 
         

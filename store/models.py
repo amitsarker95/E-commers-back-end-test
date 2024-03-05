@@ -56,6 +56,29 @@ class CartItem(models.Model):
     def __str__(self) -> str:
         return f'{self.cart.id} {self.product.name}'
     
+
+
+class Order(models.Model):
+    PENDING = 'P'
+    COMPLETE = 'C'
+    FAIL = 'F'
+    PAYMENT_STATUS = [
+        (PENDING, 'Pending'),
+        (COMPLETE, 'Complete'),
+        (FAIL, 'Failed'),
+        
+    ]
+    placed_at = models.DateField(auto_now_add=True)
+    payment_status_summary = models.CharField(max_length=1, choices=PAYMENT_STATUS, default=PENDING)
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='orders')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='products')
+    quantity = models.SmallIntegerField()
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
+
+    
    
 
 
