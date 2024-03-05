@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator
@@ -58,6 +59,28 @@ class CartItem(models.Model):
     
 
 
+class StoreCustomer(models.Model):
+    BRONZE = 'B'
+    SILVER = 'S'
+    GOLD = 'G'
+
+    MEMBERSHIP_CHOICES = [
+        (BRONZE, 'Bronze'),
+        (SILVER, 'Silver'),
+        (GOLD, 'Gold'),
+    ]
+    phone = models.CharField(max_length=15)
+    birthdate = models.DateField(null=True)
+    member_ship_choices = models.CharField(max_length=1, choices = MEMBERSHIP_CHOICES, default = BRONZE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['user__username']
+        permissions = [
+            ('view_history', 'Can view history'),
+        ]
+
+
 class Order(models.Model):
     PENDING = 'P'
     COMPLETE = 'C'
@@ -68,8 +91,11 @@ class Order(models.Model):
         (FAIL, 'Failed'),
         
     ]
+    customer = models.ForeignKey(StoreCustomer, on_delete=models.PROTECT, null=True)
     placed_at = models.DateField(auto_now_add=True)
     payment_status_summary = models.CharField(max_length=1, choices=PAYMENT_STATUS, default=PENDING)
+
+    
 
 
 class OrderItem(models.Model):

@@ -1,10 +1,11 @@
 from django.contrib import admin, messages
 from django.db.models.query import QuerySet
-from .models import Product, ProductCategory, ProductInventory, Cart, CartItem
+from .models import Product, ProductCategory, ProductInventory, Cart, CartItem, StoreCustomer
 
 
 admin.site.register(ProductCategory)
 admin.site.register(ProductInventory)
+admin.site.register(StoreCustomer)
 # admin.site.register(Product)
 
 
