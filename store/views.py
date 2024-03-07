@@ -4,7 +4,8 @@ from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyM
 from rest_framework import status
 from .models import Product, ProductCategory, ProductInventory, Cart, CartItem, Order, OrderItem
 from .serializers import ProductSerializer, ProductCategorySerializer, ProductInventorySerializer, \
-                           ProductCartSerializer , ProductCartItemSerializer, AddCartItemSerializer, OrderItemSerializer
+                           ProductCartSerializer , ProductCartItemSerializer, AddCartItemSerializer, OrderItemSerializer, \
+                           CreateOrderSerializer, OrderSerializer
                            
 
 
@@ -41,6 +42,30 @@ class ProductAddCartItemViewSet(ModelViewSet):
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+
+
+
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateOrderSerializer
+        return OrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        print(self.request.data)
+        serializer = CreateOrderSerializer(
+            data = request.data,
+            context = {
+                'user_id': self.request.user,
+            }
+        )
+        
+        serializer.is_valid(raise_exception = True)
+        order = serializer.save()
+
+        return Response(serializer.data)
     
 
 

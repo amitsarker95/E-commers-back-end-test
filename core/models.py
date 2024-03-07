@@ -38,7 +38,6 @@ class Customer(AbstractBaseUser):
     REQUIRED_FIELDS = ['username']
 
     objects = UserManager()
-    REQUIRED_FIELDS = ['username']
 
     def has_perm(self, perm, obj=None):
         return True
